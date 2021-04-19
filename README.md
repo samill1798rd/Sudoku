@@ -11,5 +11,5 @@ pip install pytest
 2- Correr las pruebas
 
 ```bash
-
+pytest test.py
 ```
