@@ -1,14 +1,15 @@
 # Sudoku
+[![Python application](https://github.com/samill1798rd/Sudoku/actions/workflows/python-app.yml/badge.svg)](https://github.com/samill1798rd/Sudoku/actions/workflows/python-app.yml)
 
-## probar el algoritmo
+## Test algorithms locally
 
-1- instalar libreria pytest
+1- Install pytest library
 
 ```bash
 pip install pytest
 ```
 
-2- Correr las pruebas
+2- Run tests
 
 ```bash
 pytest test.py
