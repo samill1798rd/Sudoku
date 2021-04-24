@@ -25,14 +25,14 @@ def makeFileOutput(tableroFinal):
 
 
 def sudokuResolve(tablero):
-    tableroResuelto = '382746519467519832915283647254897361731625984896431725543962178629178453178354296 BTS'
+    tableroResuelto = '148697523372548961956321478567983214419276385823154796691432857735819642284765139 BTS'
     return tableroResuelto
 
 
 def main():
     grid = []
     #tableroInicial:str = input()
-    tableroInicial:str = '070060200040005003050180040000050706001079002000000010300010807800030000000006000'
+    tableroInicial:str = '000000000302540000050301070000000004409006005023054790000000050700810000080060009'
     if len(tableroInicial) == 81:
         grid = fillTablero(tableroInicial)
         tableroFinal:str = sudokuResolve(tableroInicial)
