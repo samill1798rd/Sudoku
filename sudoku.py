@@ -90,6 +90,28 @@ class Sudoku:
 def makeFileOutput(tableroFinal):
     return
 
+class AC3:
+    def resolver(self, csp: Sudoku, queue=None):
+        if queue == None:
+            queue = list(csp.restricciones)
+        while queue:
+            (xi, xj) = queue.pop(0)
+            if self.quitarValor(csp, xi, xj):
+                if len(csp.posibilidades[xi]) == 0:
+                    return False
+                for x in csp.celdasRelacionadas[xi]:
+                    if x != xi:
+                        queue.append((x, xi))
+        return True
+
+    def quitarValor(self, csp: Sudoku, ci, cj):
+        def esDiferente(i, j): return i != j
+        quitar = False
+        for valor in csp.posibilidades[ci]:
+            if not any([esDiferente(valor, poss) for poss in csp.posibilidades[cj]]):
+                csp.posibilidades[ci].remove(valor)
+                quitar = True
+        return quitar
 
 # Funcion que Resuelve el algoritmo, las pruebas unitarias corren sobre este
 def sudokuResolve(tablero):
