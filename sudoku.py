@@ -93,8 +93,26 @@ def makeFileOutput(tableroFinal):
 
 # Funcion que Resuelve el algoritmo, las pruebas unitarias corren sobre este
 def sudokuResolve(tablero):
-    tableroResuelto = '148697523372548961956321478567983214419276385823154796691432857735819642284765139 BTS'
-    return tableroResuelto
+    if len(tablero) != 81:
+        return
+    sudoku = Sudoku(tablero)
+    ac3 = AC3()
+    backtrack = Backtrack()
+    if not ac3.resolver(sudoku):
+        return
+    else:
+        if sudoku.estaCompletado():
+            return str(sudoku) + " AC3"
+        else:
+            assignment = {}
+            for celda in sudoku.celdas:
+                if len(sudoku.posibilidades[celda]) == 1:
+                    assignment[celda] = sudoku.posibilidades[celda][0]
+            assignment = backtrack.resolver(assignment, sudoku)
+            for celda in sudoku.posibilidades:
+                sudoku.posibilidades[celda] = assignment[celda] if len(celda) > 1 else sudoku.posibilidades[celda]
+            if assignment:
+                return str(sudoku) + " BTS"
 
 
 def main():
