@@ -87,11 +87,112 @@ class Sudoku:
 def makeFileOutput(tableroFinal):
     return
 
+class AC3:
+    def resolver(self, csp: Sudoku, queue=None):
+        if queue == None:
+            queue = list(csp.restricciones)
+        while queue:
+            (xi, xj) = queue.pop(0)
+            if self.quitarValor(csp, xi, xj):
+                if len(csp.posibilidades[xi]) == 0:
+                    return False
+                for x in csp.celdasRelacionadas[xi]:
+                    if x != xi:
+                        queue.append((x, xi))
+        return True
+
+    def quitarValor(self, csp: Sudoku, ci, cj):
+        def esDiferente(i, j): return i != j
+        quitar = False
+        for valor in csp.posibilidades[ci]:
+            if not any([esDiferente(valor, poss) for poss in csp.posibilidades[cj]]):
+                csp.posibilidades[ci].remove(valor)
+                quitar = True
+        return quitar
+
+class Backtrack:
+    def resolver(self, assignment, csp:Sudoku):
+        if len(assignment) == len(csp.celdas):
+            return assignment
+        celda = self.noAsignado(assignment, csp)
+        for valor in self.dominio(csp, celda):
+            if self.esConsistente(csp, assignment, celda, valor):
+                self.assign(csp, celda, valor, assignment)
+                resultado = self.resolver(assignment, csp)
+                if resultado:
+                    return resultado
+                self.unassign(csp, celda, assignment)
+        return False
+    
+    def dominio(self, csp:Sudoku, celda):
+        if len(csp.posibilidades[celda]) == 1:
+            return csp.posibilidades[celda]
+        criterio = lambda valor: self.conflictos(csp, celda, valor)
+        return sorted(csp.posibilidades[celda], key=criterio)
+    
+    def noAsignado(self, assignment, csp:Sudoku):
+        unassigned = []
+        for cel in csp.celdas:
+            if cel not in assignment:
+                unassigned.append(cel)
+        criterio = lambda cel: len(csp.posibilidades[cel])
+        return min(unassigned, key=criterio)
+   
+    def assign(self,csp:Sudoku, celda, valor, assignment):       
+        assignment[celda] = valor
+        if csp.posibilidades:
+            self.verificar(csp, celda, valor, assignment)
+    
+    def verificar(self, csp:Sudoku, celda, valor, assignment):
+        for relacion in csp.celdasRelacionadas[celda]:
+            if relacion not in assignment:
+                if valor in csp.posibilidades[relacion]:
+                    csp.posibilidades[relacion].remove(valor)
+                    csp.podado[celda].append((relacion, valor))
+
+    def conflictos(self, csp:Sudoku, celda, valor):
+        total = 0
+        for relacion in csp.celdasRelacionadas[celda]:
+            if len(csp.posibilidades[relacion]) > 1 and valor in csp.posibilidades[relacion]:
+                total += 1
+        return total
+
+    def unassign(self, csp:Sudoku, celda, assignment):
+        if celda in assignment:
+            for (coordenada, valor) in csp.podado[celda]:
+                csp.posibilidades[coordenada].append(valor)
+            csp.podado[celda] = []
+            del assignment[celda]
+
+    def esConsistente(self, csp:Sudoku, assignment, celda, valor):
+        consistente = True
+        for actual, valorActual in assignment.items():
+            if valorActual == valor and actual in csp.celdasRelacionadas[celda]:
+                consistente = False
+        return consistente
 
 # Funcion que Resuelve el algoritmo, las pruebas unitarias corren sobre este
 def sudokuResolve(tablero):
-    tableroResuelto = '148697523372548961956321478567983214419276385823154796691432857735819642284765139 BTS'
-    return tableroResuelto
+    if len(tablero) != 81:
+        return
+    sudoku = Sudoku(tablero)
+    ac3 = AC3()
+    backtrack = Backtrack()
+    if not ac3.resolver(sudoku):
+        return
+    else:
+        if sudoku.estaCompletado():
+            return str(sudoku) + " AC3"
+        else:
+            assignment = {}
+            for celda in sudoku.celdas:
+                if len(sudoku.posibilidades[celda]) == 1:
+                    assignment[celda] = sudoku.posibilidades[celda][0]
+            assignment = backtrack.resolver(assignment, sudoku)
+            for celda in sudoku.posibilidades:
+                sudoku.posibilidades[celda] = assignment[celda] if len(celda) > 1 else sudoku.posibilidades[celda]
+            if assignment:
+                return str(sudoku) + " BTS"
 
 
 def main():
