@@ -27,9 +27,6 @@ class Sudoku:
     def GenerarPosibilidades(self, tablero):
         _tablero = list(tablero)
         for i, coordenadas in enumerate(self.celdas):
-            if i > 80:
-                print("Se Excedio ", i, str(coordenadas))
-                return
             if _tablero[i] == "0":
                 self.posibilidades[coordenadas] = list(range(1,10))
             else:
