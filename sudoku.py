@@ -85,7 +85,8 @@ class Sudoku:
 
 # Funcion para crear el archivo output.txt con el resultado
 def makeFileOutput(tableroFinal):
-    return
+    with open('./output.txt', 'w') as f:
+        f.write(tableroFinal)
 
 class AC3:
     def resolver(self, csp: Sudoku, queue=None):
@@ -208,3 +209,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
